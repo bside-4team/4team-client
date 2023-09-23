@@ -4,6 +4,7 @@ import useFunnel from '@/hooks/useFunnel';
 import { FormProvider, useForm } from 'react-hook-form';
 import SignUpComplete from '../complete';
 import EmailForm from '../email-form';
+import EmailVerifyNumber from '../email-verify-number';
 import OptInMarketing from '../opt-in-marketing';
 import PrivacyNotice from '../privacy-notice';
 import Terms from '../terms';
@@ -13,7 +14,16 @@ import VerifyNumber from '../verify-number';
 
 export default function SignUpComponent() {
   const [Funnel, setStep] = useFunnel(
-    ['terms', 'privacy-notice', 'opt-in-marketing', 'complete', 'email-form', 'verify-company', 'verify-number'],
+    [
+      'terms',
+      'privacy-notice',
+      'opt-in-marketing',
+      'complete',
+      'email-form',
+      'verify-company',
+      'verify-number',
+      'email-verify-number',
+    ],
     'terms'
   );
 
@@ -36,6 +46,9 @@ export default function SignUpComponent() {
           </Funnel.Step>
           <Funnel.Step name="email-form">
             <EmailForm onNext={() => setStep('email-form')} />
+          </Funnel.Step>
+          <Funnel.Step name="email-verify-number">
+            <EmailVerifyNumber />
           </Funnel.Step>
           <Funnel.Step name="user-info">
             <UserInfoForm />
