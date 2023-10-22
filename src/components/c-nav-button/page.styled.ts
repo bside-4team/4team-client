@@ -5,6 +5,10 @@ export const Button = styled.button<{ isActive: Boolean }>`
   height: 60px;
   background-color: ${({ theme, isActive }) => (isActive ? 'white' : theme.colors.neutral.bg05)};
   border: ${({ isActive }) => (isActive ? 0 : 2)}px solid #ced9db;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 8px;
 `;
 export const Icon = styled.div``;
 

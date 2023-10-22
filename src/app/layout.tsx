@@ -29,9 +29,19 @@ const subFont = localFont({
 });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // 배포 환경에서 console.log, console.warn 지우기
+  if (process.env.NODE_ENV === 'production') {
+    console = window.console || {};
+    console.log = function no_console() {};
+    console.warn = function no_console() {};
+    console.error = function no_console() {};
+  }
+
   return (
     <html lang="en">
-      <head></head>
+      <head>
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1" />
+      </head>
       <body className={`${subFont.variable} ${mainFont.variable}`}>
         <StyledComponentsRegistry>
           <RecoilRoot>

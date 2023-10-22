@@ -9,6 +9,7 @@ export const Wrapper = styled.div`
   z-index: 1;
 
   @media screen and (max-width: 768px) {
+    position: fixed;
     width: 100%;
   }
 `;

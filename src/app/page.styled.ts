@@ -17,4 +17,8 @@ export const NavContainer = styled.div`
   & > button {
     flex-grow: 1;
   }
+
+  @media screen and (max-width: 768px) {
+    position: fixed;
+  }
 `;
