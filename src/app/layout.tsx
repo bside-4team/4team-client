@@ -30,7 +30,7 @@ const subFont = localFont({
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   // 배포 환경에서 console.log, console.warn 지우기
-  if (process.env.NODE_ENV === 'production') {
+  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
     console = window.console || {};
     console.log = function no_console() {};
     console.warn = function no_console() {};
