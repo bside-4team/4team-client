@@ -25,7 +25,7 @@ const subFont = localFont({
 });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  if (process.env.NODE_ENV === 'development' && typeof window !== undefined) {
+  if (process.env.NODE_ENV === 'production' && typeof window !== undefined) {
     console = window.console || {};
     console.log = function no_console() {};
     console.warn = function no_console() {};
