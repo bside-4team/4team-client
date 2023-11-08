@@ -51,5 +51,5 @@ jobs:
             ${{ secrets.DOCKER_REGISTRY }}/taste-client:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_REGISTRY }}/taste-client:latest
           secret-files: |
-            npmrc=${{ .env.npmrc_path }}
+            npmrc=${{ env.npmrc_path }}
           cache-to: type=inline
