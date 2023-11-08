@@ -15,8 +15,8 @@ jobs:
 
       - name: Create .npmrc
         run: |
-          echo "//npm.pkg.github.com/:_authToken=\${{ secrets.NPM_AUTH_TOKEN }}" > ${{ github.workspace }}/.npmrc
-          echo "@homekeeper89:registry=https://npm.pkg.github.com" >> ${{ github.workspace }}/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=\${{ secrets.NPM_AUTH_TOKEN }}" > $HOME/.npmrc
+          echo "@homekeeper89:registry=https://npm.pkg.github.com" >> $HOME/.npmrc
 
       - name: inject env
         run: |
@@ -41,7 +41,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build image
-        run: docker build . -f Dockerfile -t ${{ secrets.DOCKER_REGISTRY }}/taste-client:latest --secret id=npmrc,src=${{ github.workspace }}/.npmrc
+        run: docker build . -f Dockerfile -t ${{ secrets.DOCKER_REGISTRY }}/taste-client:latest --secret id=npmrc,src=$HOME/.npmrc
 
       - name: Push the Docker image
         run: docker push ${{ secrets.DOCKER_REGISTRY }}/taste-client:latest
