@@ -29,7 +29,6 @@ jobs:
           echo "NEXT_PUBLIC_NAVER_CLIENT_SECRET=${{ secrets.NEXT_PUBLIC_NAVER_CLIENT_SECRET }}" >> .env
           echo "NEXT_PUBLIC_ACCESS_TOKEN=${{ secrets.NEXT_PUBLIC_ACCESS_TOKEN }}" >> .env
           echo "NEXT_PUBLIC_REFRESH_TOKEN=${{ secrets.NEXT_PUBLIC_REFRESH_TOKEN }}" >> .env
-          cat $HOME/.npmrc
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -41,8 +40,15 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build image
-        run: docker build . -f Dockerfile -t ${{ secrets.DOCKER_REGISTRY }}/taste-client:latest --secret id=npmrc,src=$HOME/.npmrc
-
-      - name: Push the Docker image
-        run: docker push ${{ secrets.DOCKER_REGISTRY }}/taste-client:latest
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_REGISTRY }}/taste-client:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKER_REGISTRY }}/taste-client:latest
+          secret-files: |
+            npmrc=$HOME/.npmrc
+          cache-to: type=inline
