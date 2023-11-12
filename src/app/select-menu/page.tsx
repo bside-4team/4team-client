@@ -1,59 +1,19 @@
-'use client';
+import { getSSRFoodOption } from '@/apis/food/option';
+import CSelectMenu from '@/components/c-select-menu';
+import getQueryClient from '@/lib/react-query/getQueryClient';
+import { Hydrate, dehydrate } from '@tanstack/react-query';
 
-import { getFoodOption } from '@/apis/food/option';
-import RefreshButton from '@/components/Button/RefreshButton';
-import CHeader from '@/components/c-header';
-import CRecommendButton from '@/components/c-recommend-button';
-import CSelectCategory from '@/components/c-select-category';
-import CSelectKeyword from '@/components/c-select-keyword';
-import CSelectSection from '@/components/c-select-section';
-import { selectFoodState } from '@/lib/atom';
-import { useQuery } from '@tanstack/react-query';
-import { useRecoilState } from 'recoil';
-import * as S from './page.styled';
-
-export default function SelectMenu() {
-  const [foodState, setFoodState] = useRecoilState(selectFoodState);
-
-  const recommendBtnDisabled = foodState?.category?.length === 0 || foodState?.keyword?.length === 0;
-  const refreshBtnDisabled = foodState?.category?.length === 0 && foodState?.keyword?.length === 0;
-
-  const { data } = useQuery(['food-option'], () => getFoodOption(), {
-    cacheTime: 0,
-    staleTime: 0,
+export default async function HydratedSelectMenu() {
+  const queryClient = getQueryClient();
+  await queryClient.prefetchQuery(['food-option'], () => getSSRFoodOption(), {
+    cacheTime: 60 * 1000 * 5, // 5분
+    staleTime: 60 * 1000, // 1분
   });
+  const dehydratedState = dehydrate(queryClient);
 
   return (
-    <>
-      <CHeader title="메뉴 고르기" isBackBtn />
-
-      <S.Container>
-        <CSelectSection title="음식 종류 선택" subtitle="(복수 선택 가능)">
-          <CSelectCategory data={data?.categories} selectType="food" />
-        </CSelectSection>
-
-        <CSelectSection title="키워드" subtitle="(복수 선택 가능)">
-          <CSelectKeyword data={data?.keywords} selectType="food" />
-        </CSelectSection>
-      </S.Container>
-
-      <CRecommendButton
-        btnText="메뉴 추첨 시작"
-        selectType="food"
-        disabled={recommendBtnDisabled}
-        style={{ margin: '48px auto 0' }}
-      />
-
-      <RefreshButton
-        btnText="선택 초기화"
-        disabled={refreshBtnDisabled}
-        onClick={() =>
-          setFoodState({
-            category: [],
-            keyword: [],
-          })
-        }
-      />
-    </>
+    <Hydrate state={dehydratedState}>
+      <CSelectMenu />
+    </Hydrate>
   );
 }
