@@ -19,7 +19,7 @@ const nextConfig = {
     return [
       {
         source: '/apis/:path*',
-        destination: process.env.NEXT_PUBLIC_DEV_SERVER_REWRITES_URL,
+        destination: `${process.env.NEXT_PUBLIC_DEV_SERVER_URL}/:path*`,
       },
       {
         source: '/search-image-api:path*',

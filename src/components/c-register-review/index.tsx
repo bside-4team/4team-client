@@ -31,8 +31,6 @@ export default function CRegisterReview() {
   const { openModal, closeModal } = useModal();
   const { data } = useOption({ type: 'restaurant' });
 
-  console.log(data);
-
   const [reviewValue, setReviewValue] = useRecoilState(reviewState);
   const [reviewPlaceInfoValue, setReviewPlaceInfoValue] = useRecoilState(reviewPlaceInfoState);
   const [revisit, setRevisit] = useState<null | boolean>(null);
