@@ -1,6 +1,5 @@
 'use client';
 
-import { getFoodOption } from '@/apis/food/option';
 import * as S from '@/app/select-menu/page.styled';
 import RefreshButton from '@/components/Button/RefreshButton';
 import CHeader from '@/components/c-header';
@@ -10,9 +9,6 @@ import CSelectKeyword from '@/components/c-select-keyword';
 import CSelectSection from '@/components/c-select-section';
 import useOption from '@/hooks/useOption';
 import { selectFoodState } from '@/lib/atom';
-import { queryClient } from '@/lib/react-query/ReactQueryProvider';
-import { dehydrate } from '@tanstack/react-query';
-import { GetServerSideProps } from 'next';
 import { useRecoilState } from 'recoil';
 
 export default function CSelectMenu() {
@@ -57,18 +53,3 @@ export default function CSelectMenu() {
     </>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  await queryClient.prefetchQuery({
-    queryKey: ['food-option'],
-    queryFn: () => getFoodOption(),
-    staleTime: 0,
-    cacheTime: 0,
-  });
-
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
-  };
-};
