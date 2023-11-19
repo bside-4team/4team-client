@@ -1,12 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  staticPageGenerationTimeout: 1000,
   swcMinify: true,
   experimental: {
     appDir: true,
   },
   compiler: {
     styledComponents: true,
-    removeConsole: process.env.NODE_ENV === 'production',
   },
   webpack: config => {
     config.module.rules.push({
