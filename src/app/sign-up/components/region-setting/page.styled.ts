@@ -59,6 +59,7 @@ export const MapContainer = styled.div`
 export const ButtonContainer = styled.div`
   margin-top: 44px;
   position: absolute;
+  z-index: 1;
   left: 0;
   bottom: 0;
   background-color: ${({ theme }) => theme.colors.white};
