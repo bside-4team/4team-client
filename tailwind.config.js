@@ -10,6 +10,9 @@ module.exports = {
   theme: {
     screens: {
       sm: '320px',
+      md: {
+        max: '768px',
+      },
     },
     extend: {
       borderRadius: px0_50,

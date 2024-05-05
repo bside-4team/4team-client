@@ -7,6 +7,7 @@ export const LayoutWrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.neutral.bg05};
   min-height: 100vh;
 `;
+
 export const Layout = styled.div`
   position: relative;
   max-width: 360px;
@@ -23,13 +24,13 @@ export const LogoWrapper = styled.div`
   top: 0;
   width: 360px;
   height: 44px;
-  background-color: ${({ theme }) => theme.colors.neutral.bg10};
   z-index: 1;
-
+  background-color: ${({ theme }) => theme.colors.neutral.bg10};
   @media screen and (max-width: 768px) {
     width: 100%;
   }
 
+  /* 아래 코드 변경해야함! */
   svg {
     width: 360px;
 
