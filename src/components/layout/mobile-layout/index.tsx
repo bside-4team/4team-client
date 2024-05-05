@@ -7,14 +7,16 @@ interface Props {
 export default function MobileLayout({ children }: Props) {
   return (
     <S.LayoutWrapper>
-      <S.Layout>
+      {/* <S.Layout> */}
+      <div className="max-w-360 md:max-w-full relative mx-auto w-full bg-white">
         {/* <S.LogoWrapper> */}
         <div className="md:w-full fixed top-0 z-1 h-44 w-360 bg-neutral-bg10">
           <HEADER_LAYOUT_LOGO />
         </div>
         {/* </S.LogoWrapper> */}
         {children}
-      </S.Layout>
+      </div>
+      {/* </S.Layout> */}
     </S.LayoutWrapper>
   );
 }

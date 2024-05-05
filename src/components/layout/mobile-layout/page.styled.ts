@@ -19,6 +19,7 @@ export const Layout = styled.div`
     max-width: 100%;
   }
 `;
+
 export const LogoWrapper = styled.div`
   position: fixed;
   top: 0;
