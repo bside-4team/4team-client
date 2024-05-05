@@ -1,5 +1,4 @@
 import GNB from '@/components/GNB';
-import * as S from './page.styled';
 
 interface Props {
   children: React.ReactNode;
@@ -7,10 +6,9 @@ interface Props {
 
 export default function GNBLayout({ children }: Props) {
   return (
-    <S.Wrapper>
+    <div className="pb-60">
       {children}
-
       <GNB />
-    </S.Wrapper>
+    </div>
   );
 }
