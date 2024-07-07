@@ -5,18 +5,33 @@ import useModal from '@/components/Modal/GlobalModal/hooks/useModal';
 import CHeader from '@/components/c-header';
 import CReviewBrowserNoItem from '@/components/c-review-broswer-noitem';
 import CReviewBrowserItem from '@/components/c-review-browser-item';
-import { useEffect } from 'react';
+import { debounce } from 'es-toolkit';
+import { useEffect, useState } from 'react';
+import useMapDataQuery from './hooks/useMapDataQuery';
 
 interface IPosition {
   title: string;
   address: string;
 }
 
+type LatLng = {
+  lat: number;
+  lng: number;
+};
+
 export default function ReviewBrowse() {
+  const [center, setCenter] = useState<LatLng>({
+    lat: 33.450701,
+    lng: 126.570667,
+  });
+
   const { openModal } = useModal();
+  const data = useMapDataQuery({ ...center });
+
+  console.log('data', data);
 
   const modal = (positions?: IPosition[]) => {
-    console.log(positions);
+    console.log('positions', positions);
 
     openModal(MODAL_TYPES.bottom, {
       content: (
@@ -45,6 +60,19 @@ export default function ReviewBrowse() {
         const map = new window.kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
         const geocoder = new window.kakao.maps.services.Geocoder(); // 주소-좌표 변환 객체를
 
+        // 지도가 이동할때마다 해당 좌표값을 가져오는 코드!
+        window.kakao.maps.event.addListener(
+          map,
+          'bounds_changed',
+          debounce(() => {
+            const center = map.getCenter();
+            setCenter({
+              lat: center.La,
+              lng: center.Ma,
+            });
+          }, 500)
+        );
+
         const setBounds = () => {
           // LatLngBounds 객체에 추가된 좌표들을 기준으로 지도의 범위를 재설정합니다
           // 이때 지도의 중심좌표와 레벨이 변경될 수 있습니다
@@ -59,6 +87,8 @@ export default function ReviewBrowse() {
         positions?.forEach(position => {
           // 주소로 좌표를 검색합니다
           geocoder.addressSearch(position.address, function (result: any, status: any) {
+            console.log('result', result);
+
             // 정상적으로 검색이 완료됐으면
             if (status === window.kakao.maps.services.Status.OK) {
               const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
@@ -81,6 +111,8 @@ export default function ReviewBrowse() {
                 position: coords,
                 image: markerImage,
               });
+
+              console.log('marker', marker);
 
               marker.setMap(map);
 
