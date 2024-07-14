@@ -44,7 +44,6 @@ export default function ReviewBrowse() {
     const mapContainer = document.getElementById('map');
     const mapOption = {
       center: new window.kakao.maps.LatLng(center.lat, center.lng), // 지도의 중심좌표
-      level: 3, // 지도의 확대 레벨
     };
 
     const map = new window.kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
