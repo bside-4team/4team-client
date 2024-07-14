@@ -7,7 +7,7 @@ import CReviewBrowserNoItem from '@/components/c-review-broswer-noitem';
 import CReviewBrowserItem from '@/components/c-review-browser-item';
 import { debounce } from 'es-toolkit';
 import { useEffect, useState } from 'react';
-import useMapDataQuery from './hooks/useMapDataQuery';
+import useMapDataQuery, { MapData } from './hooks/useMapDataQuery';
 
 interface IPosition {
   title: string;
@@ -21,33 +21,28 @@ type LatLng = {
 
 export default function ReviewBrowse() {
   const [center, setCenter] = useState<LatLng>({
-    lat: 33.450701,
-    lng: 126.570667,
+    lat: 37.52114898171651,
+    lng: 126.9254755390151,
   });
 
   const { openModal } = useModal();
-  const data = useMapDataQuery({ ...center });
+  const { mapData } = useMapDataQuery({ ...center });
 
-  console.log('data', data);
-
-  const modal = (positions?: IPosition[]) => {
-    console.log('positions', positions);
-
+  const modal = (mapData?: MapData[]) => {
     openModal(MODAL_TYPES.bottom, {
       content: (
         <>
-          {positions && positions?.length > 0 ? (
-            positions?.map((p, i) => <CReviewBrowserItem key={i} title={p.title} address={p.address} />)
+          {mapData && mapData?.length > 0 ? (
+            mapData?.map((p, i) => <CReviewBrowserItem key={i} title={p.name} address={p.category} />)
           ) : (
             <CReviewBrowserNoItem />
           )}
         </>
       ),
-      removeExpandBtn: !positions || !(positions?.length > 1),
+      removeExpandBtn: !mapData || !(mapData?.length > 1),
     });
   };
-
-  const getKakaoMap = (positions: IPosition[]) => {
+  const getKakaoMap = (mapDataList: MapData[]) => {
     // script가 완전히 load 된 이후, 실행될 함수
     const onLoadKakaoMap = () => {
       window.kakao.maps.load(() => {
@@ -58,7 +53,6 @@ export default function ReviewBrowse() {
         };
 
         const map = new window.kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-        const geocoder = new window.kakao.maps.services.Geocoder(); // 주소-좌표 변환 객체를
 
         // 지도가 이동할때마다 해당 좌표값을 가져오는 코드!
         window.kakao.maps.event.addListener(
@@ -66,9 +60,10 @@ export default function ReviewBrowse() {
           'bounds_changed',
           debounce(() => {
             const center = map.getCenter();
+
             setCenter({
-              lat: center.La,
-              lng: center.Ma,
+              lat: center.Ma,
+              lng: center.La,
             });
           }, 500)
         );
@@ -82,53 +77,41 @@ export default function ReviewBrowse() {
         // 지도를 재설정할 범위정보를 가지고 있을 LatLngBounds 객체를 생성합니다
         var bounds = new kakao.maps.LatLngBounds(); // 추가한 코드
 
-        const coordMap: { [key: string]: IPosition[] } = {};
+        const coordMap: { [key: string]: MapData[] } = {};
 
-        positions?.forEach(position => {
-          // 주소로 좌표를 검색합니다
-          geocoder.addressSearch(position.address, function (result: any, status: any) {
-            console.log('result', result);
+        mapDataList?.forEach(mapData => {
+          const coords = new window.kakao.maps.LatLng(mapData.latitude, mapData.longitude);
+          const coordKey = `${mapData.latitude},${mapData.longitude}`;
+          if (!coordMap[coordKey]) {
+            coordMap[coordKey] = [];
+          }
 
-            // 정상적으로 검색이 완료됐으면
-            if (status === window.kakao.maps.services.Status.OK) {
-              const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
-              const coordKey = `${result[0].y},${result[0].x}`;
+          coordMap[coordKey].push(mapData); // 동일 좌표인 경우 묶기
 
-              if (!coordMap[coordKey]) {
-                coordMap[coordKey] = [];
-              }
+          var imageSrc = '/image/Map/map.svg', // 마커이미지의 주소입니다
+            imageSize = new kakao.maps.Size(32, 32), // 마커이미지의 크기입니다
+            imageOption = { offset: new kakao.maps.Point(14, 32) }; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+          var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
 
-              coordMap[coordKey].push(position); // 동일 좌표인 경우 묶기
-
-              var imageSrc = '/image/Map/map.svg', // 마커이미지의 주소입니다
-                imageSize = new kakao.maps.Size(32, 32), // 마커이미지의 크기입니다
-                imageOption = { offset: new kakao.maps.Point(14, 32) }; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
-              var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
-
-              // 결과값으로 받은 위치를 마커로 표시합니다
-              var marker = new window.kakao.maps.Marker({
-                map: map,
-                position: coords,
-                image: markerImage,
-              });
-
-              console.log('marker', marker);
-
-              marker.setMap(map);
-
-              window.kakao.maps.event.addListener(marker, 'click', () => modal(coordMap[coordKey])); // 마커 클릭 이벤트 추가
-
-              // LatLngBounds 객체에 좌표를 추가합니다
-              bounds.extend(coords); //추가한 코드, 현재 코드에서 좌표정보는 point[i]가 아닌 coords이다.
-
-              // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
-              setBounds(); //추가한 코드
-            }
+          // 결과값으로 받은 위치를 마커로 표시합니다
+          var marker = new window.kakao.maps.Marker({
+            map: map,
+            position: coords,
+            image: markerImage,
           });
+
+          marker.setMap(map);
+
+          window.kakao.maps.event.addListener(marker, 'click', () => modal(coordMap[coordKey])); // 마커 클릭 이벤트 추가
+
+          // LatLngBounds 객체에 좌표를 추가합니다
+          bounds.extend(coords); //추가한 코드, 현재 코드에서 좌표정보는 point[i]가 아닌 coords이다.
+
+          // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+          setBounds(); //추가한 코드
         });
       });
     };
-
     // DOM을 이용하여 script 태그를 만들어주자.
     const mapScript = document.createElement('script');
     // script.async = true 라면,
@@ -148,21 +131,10 @@ export default function ReviewBrowse() {
   };
 
   useEffect(() => {
-    const positions = [
-      { title: '포파이브 오투타워점', address: '서울 영등포구 의사당대로 83 오투타워 1층 103호' },
-      { title: '진주집', address: '서울 영등포구 국제금융로6길 33 지하 1층' },
-      { title: '봉추찜닭 여의도파이낸스타워점', address: '서울 영등포구 국제금융로2길 32 3층' },
-      { title: '별미볶음점', address: '서울 영등포구 국제금융로6길 33 여의도백화점 지하 1층' },
-      { title: '브루클린더버거조인트 여의도점', address: '서울 영등포구 국제금융로2길 24 1층 2호' },
-      { title: '해바라기', address: '서울 영등포구 국제금융로6길 33 맨하탄빌딩 지하1층35-1호 해바라기' },
-      { title: '서청미역 여의도점', address: '서울 영등포구 국제금융로2길 32 지하1층 102호' },
-      { title: '피그인더가든 여의도점', address: '서울 영등포구 여의대로 56 한화손해보험빌딩 1층' },
-      { title: '일일향 여의도점', address: '서울 영등포구 의사당대로 83 오투타워 2층' },
-      { title: '하동관 여의도점', address: '서울 영등포구 여의나루로 50 한국교직원공제회관 지하1층 b1-8호' },
-    ];
-
-    getKakaoMap(positions);
-  }, []);
+    if (mapData) {
+      getKakaoMap(mapData.data);
+    }
+  }, [mapData]);
 
   return (
     <>

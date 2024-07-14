@@ -6,10 +6,26 @@ type LatLng = {
   lng: number;
 };
 
-const useMapDataQuery = ({ lat, lng }: LatLng) => {
-  const { data } = useQuery(['map', lat, lng], () => mapRepository().getMapList({ lat, lng }));
+export type MapData = {
+  aggregateReviews: {
+    avgPrice: number;
+    revisitRatio: number;
+    totalCount: number;
+  };
+  category: string;
+  distance: number;
+  latitude: number;
+  longitude: number;
+  name: string;
+  restaurantId: string;
+};
 
-  return data;
+const useMapDataQuery = ({ lat, lng }: LatLng) => {
+  const { data } = useQuery<{
+    data: MapData[];
+  }>(['map', lat, lng], () => mapRepository().getMapList({ lat, lng }));
+
+  return { mapData: data };
 };
 
 export default useMapDataQuery;
