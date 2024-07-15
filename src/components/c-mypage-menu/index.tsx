@@ -1,5 +1,3 @@
-import * as S from './page.styled';
-
 interface Props {
   title: string;
   items: {
@@ -11,24 +9,33 @@ interface Props {
 }
 
 export default function CMypageMenu({ title, items }: Props) {
+  const menuItem = `cursor-pointer flex justify-between items-center py-17 px-24 text-14 font-normal leading-[100%] border-0 last:border-solid last:border-b-1 last:border-neutral-bg20`;
+
   return (
-    <S.Menu>
-      <S.MenuTitle>{title}</S.MenuTitle>
+    <div className="w-full pt-24">
+      <div className="px-20 py-6 text-12 font-normal leading-[100%] text-neutral-bg30">{title}</div>
 
-      {items?.map((d, i) => (
-        <S.MenuItem
-          key={i}
-          onClick={() => {
-            if(d.clickEvent) d.clickEvent();
-          }}
-          as={d.mail ? "a" : undefined}
-          href={d.mail ? "mailto:tastetionary@gmail.com" : undefined}
-        >
-          <span>{d.name}</span>
+      {items?.map((d, i) =>
+        d.mail ? (
+          <a href="mailto:tastetionary@gmail.com" key={i} className={menuItem}>
+            <span>{d.name}</span>
 
-          {d?.hasArrow && <span>{'>'}</span>}
-        </S.MenuItem>
-      ))}
-    </S.Menu>
+            {d?.hasArrow && <span>{'>'}</span>}
+          </a>
+        ) : (
+          <div
+            key={i}
+            className={menuItem}
+            onClick={() => {
+              if (d.clickEvent) d.clickEvent();
+            }}
+          >
+            <span>{d.name}</span>
+
+            {d?.hasArrow && <span>{'>'}</span>}
+          </div>
+        )
+      )}
+    </div>
   );
 }
