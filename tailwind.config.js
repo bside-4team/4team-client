@@ -61,6 +61,10 @@ module.exports = {
       backgroundImage: {
         ic_checkbox_inactive: "url('/image/CheckBox/ic_checkbox_inactive.svg')",
         ic_checkbox_active: "url('/image/CheckBox/ic_checkbox_active.svg')",
+        menu_gradient: 'repeating-linear-gradient(#FFCBB8, #FFCBB8 20px, #FCE9E6 0, #FCE9E6 100%)',
+        menu_gradient_active: 'repeating-linear-gradient(#FF6E32, #FF6E32 20px, #FCE9E6 0, #FCE9E6 100%)',
+        restaurant_gradient: 'repeating-linear-gradient(#FFE183, #FFE183 20px, #FFF8E1 0, #FFF8E1 100%)',
+        restaurant_gradient_active: 'repeating-linear-gradient(#FFCB29, #FFCB29 20px, #FFF8E1 0, #FFF8E1 100%)',
       },
     },
     colors: {
